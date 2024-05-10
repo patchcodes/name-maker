@@ -25,16 +25,16 @@ jobs:
             target: x86_64-pc-windows-msvc
             build_name: Windows-x86_64
 
-          - os_name: macOS-x86_64
-            os: macOS-latest
-            target: x86_64-apple-darwin
-            build_name: Darwin-x86_64
+          # - os_name: macOS-x86_64
+          #   os: macOS-latest
+          #   target: x86_64-apple-darwin
+          #   build_name: Darwin-x86_64
 
         toolchain:
           - stable
 
     env:
-      TARBALL: $CRATE_NAME-${{ matrix.platform.build_name }}.tar.gz
+      TARBALL: namegen-${{ matrix.platform.build_name }}.tar.gz
       DO_BUILD: matrix.toolchain == 'stable' && startsWith( github.ref, 'refs/tags/v' )
 
     steps:
@@ -76,10 +76,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.TARBALL }}
-          path: "$CRATE_NAME-*"
+          path: "${{ env.CRATE_NAME }}-*"
 
       - name: Generate SHA-256
-        run: shasum -a 256 ${{ env.TARBALL }}
+        run: shasum -a 256 ${{env.TARBALL}}
         if: |
           matrix.toolchain == 'stable' &&
           matrix.platform.os == 'macOS-latest' &&
@@ -89,6 +89,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           draft: true
-          files: "$CRATE_NAME-*"
+          files: "${{ env.CRATE_NAME }}-*"
           body_path: Changes.md
         if: ${{ env.DO_BUILD }}
