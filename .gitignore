@@ -4,3 +4,10 @@
 .vscode/
 
 dist/
+
+.go/
+
+
+# Added by cargo
+
+/target
