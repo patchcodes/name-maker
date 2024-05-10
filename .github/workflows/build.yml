@@ -34,7 +34,7 @@ jobs:
           - stable
 
     env:
-      TARBALL: ${{ env.CRATE_NAME }}-${{ matrix.platform.build_name }}.tar.gz
+      TARBALL: $CRATE_NAME-${{ matrix.platform.build_name }}.tar.gz
       DO_BUILD: matrix.toolchain == 'stable' && startsWith( github.ref, 'refs/tags/v' )
 
     steps:
@@ -66,9 +66,9 @@ jobs:
           cd target/${{ matrix.platform.target }}/release
 
           if [[ "${{ matrix.platform.os }}" == "windows-latest" ]]; then
-            7z a $SAVEPATH ${{ env.CRATE_NAME }}.exe
+            7z a $SAVEPATH $CRATE_NAME.exe
           else
-            tar czvf $SAVEPATH ${{ env.CRATE_NAME }}
+            tar czvf $SAVEPATH $CRATE_NAME
           fi
           cd -
 
@@ -76,7 +76,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.TARBALL }}
-          path: "${{ env.CRATE_NAME }}-*"
+          path: "$CRATE_NAME-*"
 
       - name: Generate SHA-256
         run: shasum -a 256 ${{ env.TARBALL }}
@@ -89,6 +89,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           draft: true
-          files: "${{ env.CRATE_NAME }}-*"
+          files: "$CRATE_NAME-*"
           body_path: Changes.md
         if: ${{ env.DO_BUILD }}
